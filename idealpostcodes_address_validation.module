@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Provides address validation
+ */
+
+
+/**
+ * main validation function
+ */
+function idealpostcodes_address_validation_validate($address, $postal_code) {
+
+
+
+//    // testing.
+//    return FALSE;
+
+    try {
+        //$address_query = "10 Downing Street London";
+        $address_query = $address;
+
+        //$api_key  = "iddqd";
+        $api_key  = 'ak_k2vs8hugvLlmGhvruHhzL6Ijesna3';
+        $base_url = "https://api.ideal-postcodes.co.uk/v1/addresses";
+        //$url      = $base_url . "?api_key=" . $api_key . "&query=" .  rawurlencode($address_query);
+        $url      = $base_url . "?api_key=" . $api_key
+            . "&query=" .  rawurlencode($address_query)
+            . "&postcode=" .  rawurlencode($postal_code);
+
+        $ch       = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = json_decode(curl_exec($ch), true);
+        curl_close($ch);
+        if (!isset($response["result"])) {
+            // @todo - log as an issue with the API
+            $code = $response['code'];
+            $message = $response['message'];
+            // We will not check the address if no result found
+            return TRUE;
+        }
+        else {
+            $addresses = $response["result"];
+            if ($addresses['total'] == 1) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+
+    } catch (Exception $e) {
+        // @todo - log as an issue with the API
+        return TRUE;
+
+    }
+
+
+
+}

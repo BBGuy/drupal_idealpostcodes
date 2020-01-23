@@ -1,0 +1,6 @@
+name = ideal-postcodes address validation
+description = Address validation using ideal-postcodes
+package = Commerce (contrib)
+dependencies[] = commerce
+core = 7.x
+
